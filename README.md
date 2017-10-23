@@ -2,6 +2,7 @@
 Rails 多层级的业务框架
 
 # 由来
+## 1. Phoenix 框架中的 Context 概念
 Phoenix 从 1.3 版本提出来了一个 Context 的思想，即可根据业务的需求，将原本单独存在的 Modle
 进行一个层级的封装，叫 Context，举个栗子:
 比如有一个简单的 Shop 网站，你定义了如下的 数据 Model:
@@ -26,10 +27,15 @@ Pay     (payment)
 Log     (logmsg)
 ```
 
+## 2. Rails Controller 中部分逻辑的思考
+
+### 2.1 Permit Attribute
+是否应该纳入 Context 进行管理, 这样可以不限于 Controller 中进行管理
+
 # 深入
 1. 引入 Flow
 Context 对业务进行了细分，而对 Model 进行了功能上的整合。
-实际上还应该/应该对 Context 进行一定程度上的整合，称之为 Flow
+实际上还 可以/应该 对 Context 进行一定程度上的整合，称之为 Flow
 
 ```
 SigninFlow
@@ -46,4 +52,4 @@ virtual-dom
 
 3. Page 显示 Dom
 包含 Flow 与 Component
-实现Reactivity 与 更新
+实现 Reactivity 与 更新
