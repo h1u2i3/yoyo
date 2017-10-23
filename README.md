@@ -27,6 +27,7 @@ Log     (logmsg)
 ```
 
 # 深入
+1. 引入 Flow
 Context 对业务进行了细分，而对 Model 进行了功能上的整合。
 实际上还应该/应该对 Context 进行一定程度上的整合，称之为 Flow
 
@@ -39,4 +40,10 @@ RefundFlow
 ...
 ```
 
-Flow 与视图层联动
+2. Flow 与视图层联动 (前端)
+Component 单独的视图组件
+virtual-dom
+
+3. Page 显示 Dom
+包含 Flow 与 Component
+实现Reactivity 与 更新

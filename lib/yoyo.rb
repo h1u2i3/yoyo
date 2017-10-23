@@ -1,5 +1,9 @@
-require "yoyo/version"
+require "active_support"
 
 module Yoyo
-  # Your code goes here...
+  extend ActiveSupport::Autoload
+
+  autoload :Version
+  autoload :Executor
+  autoload :Context
 end

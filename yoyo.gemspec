@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Xiaohui Gan"]
   spec.email         = ["286390860@qq.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{}
+  spec.description   = %q{}
+  spec.homepage      = "https://github.com/h1u2i3/yoyo"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -33,4 +33,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.16.a"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+
+  # the dev dependency
+  spec.add_development_dependency "activerecord"
+  spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "activesupport"
 end
