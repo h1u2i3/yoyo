@@ -1,4 +1,5 @@
 require "singleton"
+require "forwardable"
 
 module Yoyo
   class Context
@@ -15,9 +16,32 @@ module Yoyo
     def self.inherited(subclass)
       # make the subclass be singleton
       # make the subclass get the class methods
-      subclass.instance_eval {
+      subclass.class_eval {
         include Singleton
+
         extend ClassMethods
+        extend Forwardable
+
+        # just delegate the method as class_method
+        # like create_* update_*
+        def method_missing(name, *args)
+          klass = self.class
+          if klass.respond_to?(name)
+            # create delegator
+            klass.class_eval {
+              def_delegator klass, name
+            }
+            # execute the method
+            klass.send(name, *args)
+          else
+            super
+          end
+        end
+
+        def respond_to_missing?(name, include_all)
+          klass = self.class
+          klass.respond_to?(name)
+        end
       }
     end
 
