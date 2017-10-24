@@ -1,28 +1,11 @@
-require "active_record"
-
-conn = { adapter: "sqlite3", database: ":memory:"  }
-ActiveRecord::Base.establish_connection(conn)
-
-class Article < ::ActiveRecord::Base
-  connection.create_table :articles, force: true do |t|
-    t.string :title
-    t.text :content
-    t.timestamps
-  end
-end
-
-class Comment < ::ActiveRecord::Base
-  connection.create_table :comments, force: true do |t|
-    t.text :content
-    t.belongs_to :article
-    t.timestamps
-  end
-
-  belongs_to :article
-end
+require "db_helper"
 
 class Blog < Yoyo::Context
   records :article, :comment
+
+  def test
+    "test"
+  end
 end
 
 class Example < Yoyo::Context
@@ -105,6 +88,21 @@ RSpec.describe Yoyo::Context do
       expect(Blog.methods).to include(:update_article)
       Blog.update_article(article_id, title: "second_title")
       expect(Article.find(article_id).title).to eq("second_title")
+    end
+
+    it "can call the instance method as class method" do
+      expect(Blog.test).to eq("test")
+    end
+  end
+
+  context "instance" do
+    let (:instance_call_article) { Blog.instance.create_article(title: "title", content: "content") }
+
+    it "can call the class method as the instance method" do
+      expect(instance_call_article).to be_truthy
+      expect(instance_call_article.id).to be_truthy
+      expect(instance_call_article.title).to eq("title")
+      expect(instance_call_article.content).to eq("content")
     end
   end
 end
