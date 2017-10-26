@@ -9,7 +9,6 @@ module Yoyo
       "find_or_create_",
       "update_",
       "delete_",
-      "all_"
     ].freeze
 
     BUILDER_TAIL = "__Builder__".freeze
