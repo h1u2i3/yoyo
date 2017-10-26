@@ -133,8 +133,17 @@ For example, we want to see a article in the browser,
 and we send a request to the server, we just send a show-article-flow request,
 and the server should return a view of the article we want to see.
 
+This `flow` concept exists both in the server part and the client part, and for the client part,
+this `flow` is the goal of the client, and for the server part, this is just a database/server
+operation. So in the view part of this framework, for example, if we visit the homepage of the
+website, the web page must contains all the possible flows for the user.
+
 And for the `view` part, this `flow` part must be member of it,
 so we can easily fire a flow in the browser.
 
-We should get rid of the `Route` part in the server, the route is should/must be
+We should get rid of the `Route` part in the server, the route should/must be
 implemented in the client browser.
+
+Cause the route part is implemented in the client browser, so the server didn't concern about
+the change of client's url, it should only concern about the flow that send by the client,
+and return the flow the client.
