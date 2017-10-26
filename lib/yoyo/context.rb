@@ -58,8 +58,7 @@ module Yoyo
         end
 
         def respond_to_missing?(name, include_all)
-          klass = self.class
-          klass.respond_to?(name)
+          self.class.respond_to?(name)
         end
       }
     end
@@ -76,7 +75,7 @@ module Yoyo
           attr_reader :records
         }
 
-        self.singleton_class.class_eval {
+        singleton_class.class_eval {
           # the method_missing method
           # dispath the method to the right target
           def method_missing(name, *method_args)

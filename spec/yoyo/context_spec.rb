@@ -25,8 +25,12 @@ RSpec.describe Yoyo::Context do
       expect(Example.methods).to include(:records)
     end
 
-    it "should has the scope method as class method" do
-      expect(Example.methods).to include(:scope)
+    it "should has the sequence method as class method" do
+      expect(Example.methods).to include(:sequence)
+    end
+
+    it "should has the fetcher method as class method" do
+      expect(Example.methods).to include(:fetcher)
     end
   end
 
