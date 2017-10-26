@@ -126,6 +126,8 @@ end
 
 **Still thinking about this part ...**
 
+![Concept](concept.png)
+
 For the `business` part, we should realize that all the web request is for a target,
 so, in this `YOYO` framework, we call this request target as `flow`.
 
