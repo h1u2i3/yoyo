@@ -41,19 +41,16 @@ end
 
 ```ruby
 # Account
-# deal with the user login/logout
 class Account < Yoyo::Context
   records :user
 end
 
 # Publish
-# deal with the article/comment things
-class Pulish < Yoyo::Context
+class Pulisher < Yoyo::Context
   records :article, :comment
 end
 
 # LogContext
-# deal with the website log message
 class LogContext < Yoyo::Context
   records :log
 end
@@ -65,3 +62,79 @@ end
 
 1. in the context class, all the database operation should be a function, the context will wrap the funciton as a database transaction.
 2. cause the normal query are in the model itself, so we should place the complicate query in the context, it should consist of two kinds, the fetcher and the sequence.
+
+```ruby
+class Account < Yoyo::Context
+  records :user
+
+  def create_sample_user
+    create_user(
+      name: "xiaohui",
+      password: "123456",
+      email: "123456@qq.com"
+      admin: false
+    )
+  end
+
+  def create_sample_admin
+    create_admin(
+      name: "admin",
+      password: "678909876",
+      email: "123456@qq.com",
+      admin: true
+    )
+  end
+end
+
+class Publisher < Yoyo::Context
+  records :article, :comment
+
+  fetcher :latest_activity, [
+    :articles, :latest_articles,
+    :comments, :latest_comments
+  ]
+
+  sequence :high_rated_article_comments, [
+    :article, :find,
+    :comments, :high_rated_comments
+  ]
+
+  def add_simple_bloger
+    article = create_article(title: "title", content: "content")
+    create_comment(content: "comment", article: article)
+  end
+end
+
+class LogContext < Yoyo::Context
+  record :log
+
+  def add_viewer_log(author, viewer)
+    create_log(message: "#{viewer} visit #{author} at #{Time.now}")
+  end
+
+  def add_create_article_log(author, title)
+    create_log(message: "#{authoor} has just create a article #{title}")
+  end
+
+  def add_create_comment_log(author, article_title)
+    create_log(message: "#{author} has just create a comment to article #{article_title}")
+  end
+end
+```
+
+### 3. The Flow
+
+**Still thinking about this part ...**
+
+For the `business` part, we should realize that all the web request is for a target,
+so, in this `YOYO` framework, we call this request target as `flow`.
+
+For example, we want to see a article in the browser,
+and we send a request to the server, we just send a show-article-flow request,
+and the server should return a view of the article we want to see.
+
+And for the `view` part, this `flow` part must be member of it,
+so we can easily fire a flow in the browser.
+
+We should get rid of the `Route` part in the server, the route is should/must be
+implemented in the client browser.
