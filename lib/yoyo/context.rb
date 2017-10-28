@@ -158,11 +158,37 @@ module Yoyo
       #  end
       # end
 
-      def fetcher(name, call_array)
-        if call_array.count.even?
-          builder = instance.instance_variable_get(:'@builder')
-          create_singleton_method(name, builder)
-          method_string = <<~EOF
+      [:fetcher, :sequence].each do |method_sym|
+        define_method(method_sym) do |name, call_array|
+          generate_and_create_method(name, call_array, method_sym.to_s.concat("_method_string"))
+        end
+      end
+
+      private
+
+        def generate_and_create_method(name, call_array, method)
+          if call_array.count.even?
+            builder = instance.instance_variable_get(:'@builder')
+            create_singleton_method(name, builder)
+            method_string = send(method, name, call_array)
+            builder.class_eval(method_string)
+          else
+            raise_argument_error("the call list count should be even")
+          end
+        end
+
+        def create_singleton_method(name, builder)
+          define_singleton_method(name) do |*args|
+            builder.send(name, *args)
+          end
+        end
+
+        def raise_argument_error(reason)
+          raise ArgumentError, reason
+        end
+
+        def fetcher_method_string(name, call_array)
+          <<~EOF
             def #{name}
               #{
                 call_array.each_slice(2).map do |arr|
@@ -174,17 +200,10 @@ module Yoyo
               result(#{call_array.each_slice(2).map {|arr| arr.first.inspect}.join(", ")})
             end
           EOF
-          builder.class_eval(method_string)
-        else
-          raise_argument_error("the call list count should be even")
         end
-      end
 
-      def sequence(name, call_array)
-        if call_array.count.even?
-          builder = instance.instance_variable_get(:'@builder')
-          create_singleton_method(name, builder)
-          method_string = <<~EOF
+        def sequence_method_string(name, call_array)
+          <<~EOF
             def #{name}(*args)
               #{
                 temp_result = ""
@@ -208,22 +227,6 @@ module Yoyo
               result(#{call_array.each_slice(2).map {|arr| arr.first.inspect}.join(", ")})
             end
           EOF
-          builder.class_eval(method_string)
-        else
-          raise_argument_error("the call list count should be even")
-        end
-      end
-
-      private
-
-        def create_singleton_method(name, builder)
-          define_singleton_method(name) do |*args|
-            builder.send(name, *args)
-          end
-        end
-
-        def raise_argument_error(reason)
-          raise ArgumentError, reason
         end
     end
 
