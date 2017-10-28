@@ -121,13 +121,18 @@ module Yoyo
 
         records = instance.records
         attr_accessor_array = records.map {|record| record.to_s.pluralize.to_sym }.concat(records)
+        builder_klass_name = to_s + BUILDER_TAIL
 
         builder_class_string = <<~EOF
-          class #{self.to_s + BUILDER_TAIL}
+          class #{builder_klass_name}
             attr_accessor #{attr_accessor_array.map(&:inspect).join(", ")}
+
+            def result(*keys)
+              Struct.new(*keys).new(*keys.map {|key| send(key)})
+            end
           end
 
-          #{self.to_s + BUILDER_TAIL}.new
+          #{builder_klass_name}.new
         EOF
 
         builder = eval(builder_class_string)
@@ -166,7 +171,7 @@ module Yoyo
                   line << "#{arr.first.to_s.singularize.capitalize}.#{arr.last}"
                 end.join("\n  ")
               }
-              self
+              result(#{call_array.each_slice(2).map {|arr| arr.first.inspect}.join(", ")})
             end
           EOF
           builder.class_eval(method_string)
@@ -182,25 +187,25 @@ module Yoyo
           method_string = <<~EOF
             def #{name}(*args)
               #{
-                result = ""
+                temp_result = ""
                 call_array.each_slice(2).each_with_object([]) do |arr, o|
                   if o.empty?
                     o << "@#{arr.first}"
-                    result << "#{o.last} = "
-                    result << "#{arr.first.to_s.singularize.capitalize}.#{arr.last}(*args)"
+                    temp_result << "#{o.last} = "
+                    temp_result << "#{arr.first.to_s.singularize.capitalize}.#{arr.last}(*args)"
                   else
                     temp = o.last
                     o << "@#{arr.first}"
-                    result << "#{o.last} = "
-                    result << "#{temp}.#{arr.last}"
+                    temp_result << "#{o.last} = "
+                    temp_result << "#{temp}.#{arr.last}"
                   end
                   unless arr.last == call_array.last
-                    result << "\n  "
+                    temp_result << "\n  "
                   end
                 end
-                result
+                temp_result
               }
-              self
+              result(#{call_array.each_slice(2).map {|arr| arr.first.inspect}.join(", ")})
             end
           EOF
           builder.class_eval(method_string)

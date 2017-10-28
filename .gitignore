@@ -6,6 +6,7 @@
 /pkg/
 /spec/reports/
 /tmp/
+/lib/yoyo/test.rb
 
 # rspec failure tracking
 .rspec_status
