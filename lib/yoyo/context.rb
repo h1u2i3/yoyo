@@ -3,12 +3,22 @@ require "forwardable"
 
 module Yoyo
   class Context
+    # about the methods we want to call in the context
+    # must follow these rules:
+    # 1. these methods is just for easy use, if we have some complicate suitation,
+    # we must leave these steps in model itself.
+    # 2. these methods must be meanful, for example:
+    # we prefer update_all_article, delete_all_article, but NoMethodError
+    # update_article_all, delete_article_all, and find_or_create_article but
+    # find_article_or_create
     METHODS_HEADER = [
       "find_",
       "create_",
       "find_or_create_",
       "update_",
+      "update_all_",
       "delete_",
+      "delete_all_"
     ].freeze
 
     BUILDER_TAIL = "__Builder__".freeze

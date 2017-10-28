@@ -7,16 +7,17 @@ module Yoyo
     end
 
     def execute(*args)
+      # for example
+      # if we have a model call Article
+      # and there are calls methods for us to call:
+      # * Article.create!, Article.create
+      # * Article.update_all, Article.update
+      # * Article.delete_all, Article.delete
+      # so we must not focus on the instance method, cause it is not the
+      # context care about
       if has_respond?
-        case @execute_method
-        when /update_/, /delete_/
-          add_indirect_method
-          record = @klass.send(:find, args[0])
-          record.send(@execute_method, *args[1..-1])
-        else
-          add_direct_method
-          @klass.send(@execute_method, *args)
-        end
+        add_direct_method
+        @klass.send(@execute_method, *args)
       else
         raise NoMethodError, "there is no ##{@execute_method} method in class #{@klass}"
       end
@@ -33,16 +34,6 @@ module Yoyo
         @instance.singleton_class.class_eval {
           define_method(name) do |*args|
             klass.send(method, *args)
-          end
-        }
-      end
-
-      def add_indirect_method(name)
-        name, klass, method = @name, @klass, @execute_method
-        @instance.singleton_class.class_eval {
-          define_method(@name) do |id, *args|
-            record = klass.find(id)
-            record.send(method, *args)
           end
         }
       end
