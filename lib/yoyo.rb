@@ -7,4 +7,5 @@ module Yoyo
   autoload :Version
   autoload :Executor
   autoload :Context
+  autoload :Flow
 end
